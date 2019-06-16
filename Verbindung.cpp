@@ -2,7 +2,8 @@
 
 
 
-Verbindung::Verbindung(char id, Node & rSrc, Node & rDst) :Edge(rSrc, rDst){
+Verbindung::Verbindung(char id, Node & rSrc, Node & rDst) 
+	:Edge(rSrc, rDst), id('b'),m_kosten(3){
 	if (id == ('b' || 'f')) {
 		this->m_kosten = 3;
 	}

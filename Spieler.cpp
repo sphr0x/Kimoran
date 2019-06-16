@@ -4,6 +4,7 @@
 
 void Spieler::spielzug()
 {
+	// aus UI extrahieren
 }
 
 void Spieler::setName(std::string name)
@@ -13,12 +14,17 @@ void Spieler::setName(std::string name)
 
 void Spieler::setGeld(int gold)
 {
-	this->geld = gold;
+	this->geld += gold;
 }
 
 Node * Spieler::getStandort()
 {
 	return nullptr;
+}
+
+void Spieler::setStandort(Node& location)
+{
+	this->standort = &location;
 }
 
 Spieler::Spieler(int taler,Node& start,std::string eingabe)

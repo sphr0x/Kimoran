@@ -22,6 +22,10 @@ public:
 	void printMap(Graph& karte);
 	void setnameofPlayer(Spieler& mensch,std::string name);
 	bool foundTreasure(Node& location);
+	void printMenu();
+	bool isLager(Node& lager);
+	void printTurn(std::deque<Node*>& actualRoute, double kosten, Node& dest,Spieler mensch);
+	void deleteTurn(std::deque<Node*>& actualRoute);
 	UI();
 	~UI();
 };

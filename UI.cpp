@@ -10,24 +10,30 @@ void UI::dateiSchreiben()
 {
 }
 
-void UI::menu(Graph& karte,Spieler bla, Node& schatz,Node& start)
+void UI::menu(/*Graph& karte,Spieler bla, Node& schatz,Node& start*/)
 {
-	Spieler mensch(30,start);
-	Spieler ki(30,start);
+	Graph* karte = new Graph;
 	int choose;
-	std::string filename;
+	std::string filename = "C23_Projekt_19SS_Inseln.txt";
 	Node* turn = nullptr;
 	Node* location = nullptr;
 	std::deque<Node*> path;
 	double kosten;
+	std::vector<Spieler*> players; // pos 1 mensch pos 2 ki
+
+	printIntro();
+	printInfo();
+	readMAP(*karte, filename, players);
 
 	std::cout << "ihr name";
 	std::cin >> filename;
 	//hier checkinput auf "kein leerzeichen" ?
-	setnameofPlayer(mensch,filename);
+	
+	//setnameofPlayer(mensch,filename);			// auf mensch via vector player zugreifen
+
 	printMenu();
 
-	while ((!foundTreasure(*location)) || mensch.getGeld()==0 || ki.getGeld()==0) {
+	while ((!foundTreasure(*location)) || mensch.getGeld()==0 || ki.getGeld()==0) { // auf spieler via vector
 		std::cout << "Bitte Aktion waehlen:" << std::endl;
 		std::cin >> choose;
 		choose = checkInput(choose);
@@ -38,12 +44,11 @@ void UI::menu(Graph& karte,Spieler bla, Node& schatz,Node& start)
 			std::cout << "bitte file" << std::endl;
 			std::cin >> filename;
 			filename = checkInput(filename);		// checkinput schreiben
-			// open file -> read graph
-			dateiEinlesen();						// schreiben
+			readMAP(*karte, filename, players);
 			break;
 		case 2:
 			// display karte -> node names,  neighbors of nodes & which kind, no lager/schatz
-			printMap(karte);						// schreiben
+			printMap(*karte);						// schreiben
 			break;
 		case 3:
 			// next turn
@@ -51,12 +56,12 @@ void UI::menu(Graph& karte,Spieler bla, Node& schatz,Node& start)
 			std::cin >> choose;
 			choose = checkInput(choose);
 			// input zielnode -> dijkstra
-			kosten = karte.findShortestPathDijkstra(path,*location,*turn);
+			kosten = karte->findShortestPathDijkstra(path,*location,*turn);
 			/* if(genug taler){
-			walk/calculate route 
+			walk/calculate route  
 			-> if(lager){
 			collect Taler
-			if(found schatz){
+			if(found schatz){	//  Suchen des Schatzes NUUUUUR auf der Zielinsel.
 			output "won" + end game 
 			} 
 			-> get route ->
@@ -89,6 +94,8 @@ void UI::menu(Graph& karte,Spieler bla, Node& schatz,Node& start)
 			break;
 		case 4:
 			//beenden
+			delete karte;
+			players.clear();
 			break;
 		case 5:
 			printMenu();
@@ -99,24 +106,97 @@ void UI::menu(Graph& karte,Spieler bla, Node& schatz,Node& start)
 			break;
 		}
 	}
+	delete karte;
+	players.clear();
 }
 
-void UI::karte(Graph& karte)
+Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& players)
 {
-	// read from file - works
-	std::ifstream datei("Neues Textdokument.txt");
+	//source https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
+	//source http://www.cplusplus.com/reference/string/string/size/
+
+	Node* schatz = nullptr;
+	std::ifstream file(filename);
 	std::string line;
-	//datei.open("Neues Textdokument.txt"); anscheinend nicht nötig
-	if (datei.is_open()&& !(datei.eof())) {
-		while (getline(datei, line)) {
-			std::cout << line << std::endl;
+	std::string delimiter = " ";
+	std::string delimiterEnd = "\n";
+	/* is delimiter End not works -> try: std::string::npos
+	This value, when used as the value for a len (or sublen) parameter in string's member functions,
+	means "until the end of the string".
+	*/
+	std::string token;
+	std::string token2;
+	int position = 0;
+
+	if (file.is_open()&& !(file.eof())) {
+		while (std::getline(file, line)) {
+			token = line.substr(0, line.find(delimiter));
+			position = token.size();
+			if (token == "Insel") {
+				token = line.substr(position, line.find(delimiterEnd));
+				karte.addNode(new Node(token));
+			}
+			else if (token == "Lager") {								
+				int gold;
+				token = line.substr(position, line.find(delimiter));
+				token2 = line.substr(position + token.size(), line.find(delimiter));
+				gold = std::stoi(token2);
+
+				for (auto node : karte.getNodes) {
+					if (node->getID() == token) {
+						node.setGold(gold);
+					}
+				}
+			}
+			else if (token == "Tunnel"|| token == "Bruecke"|| token == "Faehre") {
+				char kind;
+				Node *n1 = nullptr;
+				Node *n2 = nullptr;
+
+				kind = token.front();
+				token = line.substr(position, line.find(delimiter));
+				token2 = line.substr(position + token.size(), line.find(delimiterEnd));
+				n1 = new Node(token);
+				n2 = new Node(token2);
+				karte.addEdge(new Verbindung(kind,*n1,*n2));
+			}
+			else if (token == "Schatz") {
+				token = line.substr(position, line.find(delimiterEnd));
+
+				for (auto node : karte.getNodes) {
+					if (node->getID() == token) {
+						schatz = node;
+					}
+				}
+			}
+			else if (token == "Mensch"|| token == "Computer") {
+				Spieler *p = nullptr;
+				std::string kind = token;
+				int gold;
+				Node *start = nullptr;		
+
+				token = line.substr(position, line.find(delimiterEnd));
+				token2 = line.substr(position + token.size(), line.find(delimiter));
+				gold = std::stoi(token2);
+
+				for (auto node : karte.getNodes) {
+					if (node->getID() == token2) {
+						start = node;
+					}
+				}
+				p = new Spieler(*start,gold);
+				players.push_back(p);
+			}
+			else {
+			//throw "cannot read file ( unknown keywords) " 
+			}
 		}
 	}
-	else std::cout << "file was closed" << std::endl;
-
-	datei.close();
-
-
+	else{ // oder if, wenns nich geht
+		std::cout << "file was closed / is empty" << std::endl;		// später throw 
+	}
+	file.close();
+	return schatz;
 }
 
 std::string UI::checkInput(std::string input)
@@ -167,7 +247,10 @@ void UI::setnameofPlayer(Spieler & mensch, std::string name)
 bool UI::foundTreasure(Node& location)
 {
 	if (location.getID == "Schatz") // not ID but Vari bool m_schatz = true
+	{
 		return true;
+	}
+
 	return false;
 }
 
@@ -215,7 +298,85 @@ void UI::printTurn(std::deque<Node*>& actualRoute, double kosten, Node& dest, Sp
 void UI::deleteTurn(std::deque<Node*>& actualRoute){
 	actualRoute.clear();
 }
+/*
+void UI::setMAP(Graph & karte) {	// später in UI
 
+	Node* kim = new Node("Kimoran_Berg");
+	Node* ask = new Node("Askhora");
+	Node* bera = new Node("Beramorin");
+	Node* ost = new Node("Ostergaard");
+	Node* uth = new Node("Uthenwold");
+	Verbindung* t1 = new Verbindung('t', *bera, *ost);
+	Verbindung* b1 = new Verbindung('b', *bera, *ost);
+	Verbindung* b2 = new Verbindung('b', *ost, *ask);
+	Verbindung* f1 = new Verbindung('f', *uth, *kim);
+	Verbindung* f2 = new Verbindung('f', *uth, *ask);
+	Verbindung* t2 = new Verbindung('t', *ask, *kim);
+	Verbindung* b3 = new Verbindung('b', *ask, *kim);
+	Verbindung* b4 = new Verbindung('b', *kim, *bera);
+	Verbindung* t3 = new Verbindung('t', *ask, *bera);
+
+	Verbindung* t4 = new Verbindung('t', *ost, *bera);
+	Verbindung* b5 = new Verbindung('b', *ost, *bera);
+	Verbindung* b6 = new Verbindung('b', *ask, *ost);
+	Verbindung* f3 = new Verbindung('f', *kim, *uth);
+	Verbindung* f4 = new Verbindung('f', *ask, *uth);
+	Verbindung* t5 = new Verbindung('t', *kim, *ask);
+	Verbindung* b7 = new Verbindung('b', *kim, *ask);
+	Verbindung* b8 = new Verbindung('b', *bera, *kim);
+	Verbindung* t6 = new Verbindung('t', *bera, *ask);
+
+	karte.addNode(kim);
+	karte.addNode(ask);
+	karte.addNode(bera);
+	karte.addNode(ost);
+	karte.addNode(uth);
+
+	karte.addEdge(t1);
+	karte.addEdge(t2);
+	karte.addEdge(t3);
+	karte.addEdge(f1);
+	karte.addEdge(f2);
+	karte.addEdge(b1);
+	karte.addEdge(b2);
+	karte.addEdge(b3);
+	karte.addEdge(b4);
+
+	karte.addEdge(t4);
+	karte.addEdge(t5);
+	karte.addEdge(t6);
+	karte.addEdge(f3);
+	karte.addEdge(f4);
+	karte.addEdge(b5);
+	karte.addEdge(b6);
+	karte.addEdge(b7);
+	karte.addEdge(b8);
+	/*
+		Tunnel Beramorin Ostergaard
+		Bruecke Kimoran_Berg Askhora
+		Bruecke Askhora Ostergaard
+		Faehre Askhora Uthenwold
+		Faehre Uthenwold Kimoran_Berg
+		Tunnel Beramorin Askhora
+		Bruecke Ostergaard Beramorin
+		Bruecke Beramorin Kimoran_Berg
+		Schatz Beramorin
+		Lager Ostergaard 15 Taler
+		Lager Uthenwold 3 Taler
+		Mensch Kimoran_Berg 30 Taler
+		Computer Kimoran_Berg 30 Taler
+		
+}*/
+void UI::printIntro()
+{	// improive text
+	std::cout << "Willkommen in der Welt von Kimoran \n Spielregeln \n Info: Die Standartspielkarte wurde geladen." << std::endl;
+}
+void UI::printInfo()
+{
+	// anfangs ( nach regeln in UI ) printen
+	// gibt anleitung, dass reihenfolge bei eigenen txt eingehalten werden soll
+	// grund: spieler brauchen Node als startpunkt
+}
 UI::UI()
 {
 }

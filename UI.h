@@ -15,8 +15,8 @@ public:
 	void dateiEinlesen();		// rückgabe typ ?
 	void dateiSchreiben();		// -"-
 	Node* getStart(Node & start) { return &start; };
-	void menu(Graph& karte, Spieler bla, Node& schatz,Node& start);
-	void karte(Graph & karte);			// ungerichteter graph
+	void menu();
+	Node* readMAP(Graph & karte, std::string& filename, std::vector<Spieler*>& players);			// ungerichteter graph
 	std::string checkInput(std::string input);
 	int checkInput(int input);
 	void printMap(Graph& karte);
@@ -26,6 +26,9 @@ public:
 	bool isLager(Node& lager);
 	void printTurn(std::deque<Node*>& actualRoute, double kosten, Node& dest,Spieler mensch);
 	void deleteTurn(std::deque<Node*>& actualRoute);
+	//void setMAP(Graph & karte);			// später weg
+	void printIntro();
+	void printInfo();
 	UI();
 	~UI();
 };

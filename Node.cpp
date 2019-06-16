@@ -14,3 +14,18 @@ Node::Node()
 	s << "Node_" << std::setw(4) << std::setfill('0') << s_numInstances;
 	m_id = s.str();
 }
+
+void Node::setGold(int value)
+{
+	this->gold = value;
+}
+
+int Node::getGold()
+{
+	return this->gold;
+}
+
+void Node::setGoal(bool treasure)
+{
+	this->goal = treasure;
+}

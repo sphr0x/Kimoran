@@ -19,7 +19,7 @@ public:
 	void setGeld(int gold);
 	Node* getStandort();
 	void setStandort(Node& location);
-	Spieler(int taler, Node& start, std::string eingabe = "KI");
+	Spieler(Node& start, int taler, std::string eingabe = "KI");
 	~Spieler();
 };
 

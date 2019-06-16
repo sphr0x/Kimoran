@@ -27,7 +27,7 @@ void Spieler::setStandort(Node& location)
 	this->standort = &location;
 }
 
-Spieler::Spieler(int taler,Node& start,std::string eingabe)
+Spieler::Spieler(Node& start, int taler,std::string eingabe)
 	:geld(taler), standort(&start), name(eingabe)
 {
 

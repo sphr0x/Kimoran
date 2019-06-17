@@ -24,11 +24,11 @@ public:
 	bool foundTreasure(Node& location);
 	void printMenu();
 	bool isLager(Node& lager);
-	void printTurn(std::deque<Node*>& actualRoute, double kosten, Node& dest,Spieler mensch);
+	void printTurn(std::deque<Node*>& actualRoute, double kosten, Node& dest,Spieler& mensch);
 	void deleteTurn(std::deque<Node*>& actualRoute);
-	//void setMAP(Graph & karte);			// später weg
 	void printIntro();
 	void printInfo();
+	void delay(std::string a);				// für RPG text speed
 	UI();
 	~UI();
 };

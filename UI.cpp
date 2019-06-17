@@ -27,13 +27,14 @@ void UI::menu(/*Graph& karte,Spieler bla, Node& schatz,Node& start*/)
 
 	std::cout << "ihr name";
 	std::cin >> filename;
-	//hier checkinput auf "kein leerzeichen" ?
+	//hier checkinput auf "kein leerzeichen" !
+	// filename=checkInput(filename);
 	
 	//setnameofPlayer(mensch,filename);			// auf mensch via vector player zugreifen
 
 	printMenu();
 
-	while ((!foundTreasure(*location)) || mensch.getGeld()==0 || ki.getGeld()==0) { // auf spieler via vector
+	while ((!foundTreasure(*location)) || players[0]->getGeld()==0 || players[1]->getGeld()==0) { // auf spieler via vector
 		std::cout << "Bitte Aktion waehlen:" << std::endl;
 		std::cin >> choose;
 		choose = checkInput(choose);
@@ -67,18 +68,18 @@ void UI::menu(/*Graph& karte,Spieler bla, Node& schatz,Node& start*/)
 			-> get route ->
 			} */
 
-			if (kosten <= mensch.getGeld()) {
+			if (kosten <= players[0]->getGeld()) {
 			//mensch.walkTo(turn);// walkTo in Spieler.h schreiben
 				if (isLager(*turn)) {
-					mensch.setGeld(turn->getLagerGeld()); // get /  fkt schreiben in node bzw Insel
-					turn->setLagerGeld(0);
+					players[0]->setGeld(turn->getGold()); // bis jetzt nur dst node nach lager geprüft / mit path check machen
+					turn->setGold(0);
 				}
 				if (foundTreasure(*turn)) {
-					std::cout << mensch.getName() << " hat gewonnen. juhu!" << std::endl;
-					// hier return; bzw ende init iwie
+					std::cout << players[0]->getName() << " hat gewonnen. juhu!" << std::endl;
+					return;
 				}
-				printTurn(path,kosten,*turn,mensch);
-				mensch.setStandort(*turn);
+				printTurn(path,kosten,*turn,*players[0]);
+				players[0]->setStandort(*turn);
 			}
 			deleteTurn(path);
 			
@@ -174,6 +175,7 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 				std::string kind = token;
 				int gold;
 				Node *start = nullptr;		
+				std::string name = token;
 
 				token = line.substr(position, line.find(delimiterEnd));
 				token2 = line.substr(position + token.size(), line.find(delimiter));
@@ -184,7 +186,7 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 						start = node;
 					}
 				}
-				p = new Spieler(*start,gold);
+				p = new Spieler(*start,gold,name);
 				players.push_back(p);
 			}
 			else {
@@ -246,11 +248,9 @@ void UI::setnameofPlayer(Spieler & mensch, std::string name)
 
 bool UI::foundTreasure(Node& location)
 {
-	if (location.getID == "Schatz") // not ID but Vari bool m_schatz = true
-	{
+	if (location.isGoal()){
 		return true;
 	}
-
 	return false;
 }
 
@@ -280,7 +280,7 @@ bool UI::isLager(Node& lager)
 	return false;
 }
 
-void UI::printTurn(std::deque<Node*>& actualRoute, double kosten, Node& dest, Spieler mensch) {
+void UI::printTurn(std::deque<Node*>& actualRoute, double kosten, Node& dest, Spieler& mensch) {
 	std::cout << "\n\t\t\tRoute: ";
 	for (auto node : actualRoute) {
 		if (dest.getID() == node->getID()) {
@@ -298,75 +298,6 @@ void UI::printTurn(std::deque<Node*>& actualRoute, double kosten, Node& dest, Sp
 void UI::deleteTurn(std::deque<Node*>& actualRoute){
 	actualRoute.clear();
 }
-/*
-void UI::setMAP(Graph & karte) {	// später in UI
-
-	Node* kim = new Node("Kimoran_Berg");
-	Node* ask = new Node("Askhora");
-	Node* bera = new Node("Beramorin");
-	Node* ost = new Node("Ostergaard");
-	Node* uth = new Node("Uthenwold");
-	Verbindung* t1 = new Verbindung('t', *bera, *ost);
-	Verbindung* b1 = new Verbindung('b', *bera, *ost);
-	Verbindung* b2 = new Verbindung('b', *ost, *ask);
-	Verbindung* f1 = new Verbindung('f', *uth, *kim);
-	Verbindung* f2 = new Verbindung('f', *uth, *ask);
-	Verbindung* t2 = new Verbindung('t', *ask, *kim);
-	Verbindung* b3 = new Verbindung('b', *ask, *kim);
-	Verbindung* b4 = new Verbindung('b', *kim, *bera);
-	Verbindung* t3 = new Verbindung('t', *ask, *bera);
-
-	Verbindung* t4 = new Verbindung('t', *ost, *bera);
-	Verbindung* b5 = new Verbindung('b', *ost, *bera);
-	Verbindung* b6 = new Verbindung('b', *ask, *ost);
-	Verbindung* f3 = new Verbindung('f', *kim, *uth);
-	Verbindung* f4 = new Verbindung('f', *ask, *uth);
-	Verbindung* t5 = new Verbindung('t', *kim, *ask);
-	Verbindung* b7 = new Verbindung('b', *kim, *ask);
-	Verbindung* b8 = new Verbindung('b', *bera, *kim);
-	Verbindung* t6 = new Verbindung('t', *bera, *ask);
-
-	karte.addNode(kim);
-	karte.addNode(ask);
-	karte.addNode(bera);
-	karte.addNode(ost);
-	karte.addNode(uth);
-
-	karte.addEdge(t1);
-	karte.addEdge(t2);
-	karte.addEdge(t3);
-	karte.addEdge(f1);
-	karte.addEdge(f2);
-	karte.addEdge(b1);
-	karte.addEdge(b2);
-	karte.addEdge(b3);
-	karte.addEdge(b4);
-
-	karte.addEdge(t4);
-	karte.addEdge(t5);
-	karte.addEdge(t6);
-	karte.addEdge(f3);
-	karte.addEdge(f4);
-	karte.addEdge(b5);
-	karte.addEdge(b6);
-	karte.addEdge(b7);
-	karte.addEdge(b8);
-	/*
-		Tunnel Beramorin Ostergaard
-		Bruecke Kimoran_Berg Askhora
-		Bruecke Askhora Ostergaard
-		Faehre Askhora Uthenwold
-		Faehre Uthenwold Kimoran_Berg
-		Tunnel Beramorin Askhora
-		Bruecke Ostergaard Beramorin
-		Bruecke Beramorin Kimoran_Berg
-		Schatz Beramorin
-		Lager Ostergaard 15 Taler
-		Lager Uthenwold 3 Taler
-		Mensch Kimoran_Berg 30 Taler
-		Computer Kimoran_Berg 30 Taler
-		
-}*/
 void UI::printIntro()
 {	// improive text
 	std::cout << "Willkommen in der Welt von Kimoran \n Spielregeln \n Info: Die Standartspielkarte wurde geladen." << std::endl;
@@ -376,6 +307,14 @@ void UI::printInfo()
 	// anfangs ( nach regeln in UI ) printen
 	// gibt anleitung, dass reihenfolge bei eigenen txt eingehalten werden soll
 	// grund: spieler brauchen Node als startpunkt
+}
+void UI::delay(std::string a)
+{
+	int i;
+	for (i = 0;a.length();++i) {
+		std::cout << a[i];
+		Sleep(20);
+	}
 }
 UI::UI()
 {

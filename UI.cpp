@@ -121,50 +121,77 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 	std::string line;
 	std::string delimiter = " ";
 	std::string delimiterEnd = "\n";
-	/* is delimiter End not works -> try: std::string::npos
+	/* if delimiter End not works -> try: std::string::npos
 	This value, when used as the value for a len (or sublen) parameter in string's member functions,
 	means "until the end of the string".
 	*/
 	std::string token;
 	std::string token2;
-	int position = 0;
+	std::string addLength;
+	size_t position = 0;
 
-	if (file.is_open()&& !(file.eof())) {
+	//file.open(filename);
+	if (file.is_open()/*&& !(file.eof())*/) {
+	
 		while (std::getline(file, line)) {
 			token = line.substr(0, line.find(delimiter));
 			position = token.size();
-			if (token == "Insel") {
-				token = line.substr(position, line.find(delimiterEnd));
+			if (token == "Insel") {													// ok
+				token = line.substr((position+1), line.find(delimiterEnd));
 				karte.addNode(new Node(token));
 			}
 			else if (token == "Lager") {								
 				int gold;
-				token = line.substr(position, line.find(delimiter));
-				token2 = line.substr(position + token.size(), line.find(delimiter));
+				token = line.substr((position+1), line.find(delimiter)); // hier weder find noch rfind -> has 2be solved !
+				token2 = line.substr((position + 2 + token.size()), line.rfind(delimiter));
 				gold = std::stoi(token2);
 
-				for (auto node : karte.getNodes) {
+				for (auto node : karte.getNodes()) {
 					if (node->getID() == token) {
-						node.setGold(gold);
+						node->setGold(gold);
 					}
 				}
 			}
-			else if (token == "Tunnel"|| token == "Bruecke"|| token == "Faehre") {
+			else if (token == "Tunnel"|| token == "Bruecke"|| token == "Faehre") { 
 				char kind;
 				Node *n1 = nullptr;
 				Node *n2 = nullptr;
 
+				//addLength = token +
+
 				kind = token.front();
-				token = line.substr(position, line.find(delimiter));
-				token2 = line.substr(position + token.size(), line.find(delimiterEnd));
-				n1 = new Node(token);
-				n2 = new Node(token2);
-				karte.addEdge(new Verbindung(kind,*n1,*n2));
+				token = line.substr((position + 1), line.find(delimiter));		// hier fehler: token findet immer den _ersten_ delimiter -> substr(a,b) a anpassen und b anpassen
+				token2 = line.substr((position + 2 + token.size()), line.find(delimiterEnd));
+
+				// throwed hier iwann exception
+																	
+				n2 = new Node(token2);			
+
+				for (auto node : karte.getNodes()) { 
+					if (node->getID() == token){
+						n1 = node;
+					}
+				}
+				for (auto node : karte.getNodes()) {
+					if (node->getID() == token2) {
+						n2 = node;
+					}
+				}
+				if (n1 == nullptr) {
+					n1 = new Node(token);
+				}
+				if (n2 == nullptr) {
+					n2 = new Node(token2);
+				}
+				Edge *e = new Verbindung(kind, *n1, *n2);
+				karte.addEdge(e);
+				e = new Verbindung(kind, *n2, *n1);
+				karte.addEdge(e);
 			}
 			else if (token == "Schatz") {
-				token = line.substr(position, line.find(delimiterEnd));
+				token = line.substr((position+1), line.find(delimiterEnd));
 
-				for (auto node : karte.getNodes) {
+				for (auto node : karte.getNodes()) {
 					if (node->getID() == token) {
 						schatz = node;
 					}
@@ -177,11 +204,11 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 				Node *start = nullptr;		
 				std::string name = token;
 
-				token = line.substr(position, line.find(delimiterEnd));
-				token2 = line.substr(position + token.size(), line.find(delimiter));
+				token = line.substr((position+1), line.find(delimiterEnd)); // not ok delim @
+				token2 = line.substr((position + 2 +  token.size()), line.find(delimiter)); // not ok
 				gold = std::stoi(token2);
 
-				for (auto node : karte.getNodes) {
+				for (auto node : karte.getNodes()) {
 					if (node->getID() == token2) {
 						start = node;
 					}
@@ -192,6 +219,13 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 			else {
 			//throw "cannot read file ( unknown keywords) " 
 			}
+			// test ab hier
+
+			// for (auto node : karte.getNodes())std::cout << node->getID() << std::endl;
+			// for (auto node : karte.getNodes())std::cout << node->getGold() << std::endl;
+			// for (auto node : karte.getNodes())std::cout << node->isGoal() << std::endl;
+			for (auto edge : karte.getEdges())std::cout << edge->getID() << std::endl;
+
 		}
 	}
 	else{ // oder if, wenns nich geht
@@ -239,6 +273,28 @@ void UI::printMap(Graph & karte)
 {
 	// display karte -> node names,  neighbors of nodes & which kind, no lager/schatz
 	// == print nodes, edges , no treasure , no camp
+	// << std::fixed << std::setprecision(2) == dezimal auf 2 stellen (nach komma?)
+	const char seperate = ' ';
+	const char seperate2 = '-';
+	const int width = 8;
+	const int widthField = 40;
+	const int widthNode = 12;
+	std::ostringstream out;
+
+	out << " " << std::setw(widthField)<< std::setfill(seperate2) <<" "<< std::endl <<
+
+	"| " << std::setw(widthField) << std::setfill(seperate) << "Inseln: | " << std::endl <<
+	"| " << std::endl <<
+	"| " << std::endl <<
+	"| " << std::endl <<
+	"| " << std::endl <<
+	"| " << std::endl <<
+	"| " << std::endl <<
+
+
+		  " " << std::setw(widthField) << std::setfill(seperate2) << " " << std::endl;
+
+	std::cout << out.str();
 }
 
 void UI::setnameofPlayer(Spieler & mensch, std::string name)

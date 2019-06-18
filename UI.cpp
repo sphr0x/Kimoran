@@ -31,6 +31,7 @@ void UI::menu(/*Graph& karte,Spieler bla, Node& schatz,Node& start*/)
 		switch (choose) {
 
 		case 1:
+			// hier fehlt noch graph.clear()
 			printInfo();
 			std::cout << "bitte file" << std::endl;
 			std::cin >> filename;
@@ -236,10 +237,17 @@ std::string UI::checkInput(std::string input)
 	// hier string zerteilen und check
 	std::string temp,temp2;
 
-	temp = input.substr(0, input.find("."));
-	temp2 = input.substr(input.find("."), (input.length() - temp.length()));
+	temp = input.substr(0, input.find("."));			// so noch except = fkt für not find ?
+	if (!(input.find("."))) {	
+		temp = "nix";
+		temp2 = "iwas";
+	}
+	temp2 = input.substr(input.find("."), (input.length() - temp.length())); 
 
-	while(!((temp.length() > 1) && (temp2 == "txt"))) {
+	// wenn kein . drinne -> temp2 exception
+	//nur .txt-> ok
+	// iwas.txt -> ok
+	while(!((temp.length() > 1) && (temp2 == ".txt"))) {
 		std::cin.clear();
 		std::cin.ignore(30, '\n');
 		std::cerr << "Aus der Eingabe ist keine .txt - Datei herauszufiltern! " << std::endl;

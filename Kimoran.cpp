@@ -26,8 +26,9 @@ int main()
 	return 0;
 }
 /* 2do
-	EVTL srand(time(NULL)); für richtigen random generator use.
-	exceptions
+
+	(EVTL srand(time(NULL)); für richtigen random generator use.
+	exceptions)
 
 
 
@@ -36,15 +37,20 @@ int main()
 	berechnung der taler stimmt nicht -> 
 	+ statt - / double in int /
 
+	KI spielzug fehlt
+
 	9 statt 8 brücken
 
 	alle tunnel geht nicht
 
 	alle fähren geht nicht
 
+	case 1 fix:
+
+	delete graph, sonst double node push etc.
+
 	std::string UI::checkInput(std::string input):
-	liest keine gültigen dateien -> immer cin.fail(); execution
-	(exception bei keiner bzw zu kurzen eingaben)
+	(exception bei ungültigen eingaben)
 
 */
 

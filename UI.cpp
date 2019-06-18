@@ -1,61 +1,54 @@
 #include "UI.h"
 
-
-
-
-
-void UI::dateiEinlesen()
-{
-}
-
-void UI::dateiSchreiben()
-{
-}
-
 void UI::menu(/*Graph& karte,Spieler bla, Node& schatz,Node& start*/)
 {
 	Graph* karte = new Graph;
 	int choose;
 	std::string filename = "C23_Projekt_19SS_Inseln.txt";
 	Node* turn = nullptr;
-	Node* location = nullptr;
+	Node* start = nullptr;
 	std::deque<Node*> path;
 	double kosten;
 	std::vector<Spieler*> players; // pos 1 mensch pos 2 ki
+	int proceed=1;
 
 	printIntro();
-	printInfo();
 	readMAP(*karte, filename, players);
+	start = players[0]->getStandort();
 
 	std::cout << "ihr name";
 	std::cin >> filename;
-	//hier checkinput auf "kein leerzeichen" !
-	// filename=checkInput(filename);
-	
-	//setnameofPlayer(mensch,filename);			// auf mensch via vector player zugreifen
-
+	while (filename.length() < 2) {
+		std::cerr << "nochmal: ( keine eingabe )";		// no throw 
+		std::cin >> filename;
+	}
+	setnameofPlayer(*players[0],filename);			
 	printMenu();
-
-	while ((!foundTreasure(*location)) || players[0]->getGeld()==0 || players[1]->getGeld()==0) { // auf spieler via vector
+	while ((gameOver(proceed)) || players[0]->getGeld() == 0 || players[1]->getGeld() == 0) {
 		std::cout << "Bitte Aktion waehlen:" << std::endl;
 		std::cin >> choose;
 		choose = checkInput(choose);
 		switch (choose) {
 
 		case 1:
-			// input filename freely
+			printInfo();
 			std::cout << "bitte file" << std::endl;
 			std::cin >> filename;
-			filename = checkInput(filename);		// checkinput schreiben
+			filename = checkInput(filename);		// checkinput testen
 			readMAP(*karte, filename, players);
 			break;
 		case 2:
-			// display karte -> node names,  neighbors of nodes & which kind, no lager/schatz
-			printMap(*karte);						// schreiben
+			MapMenu(*karte);						// testen
 			break;
 		case 3:
-			// next turn
-			std::cout << "spielzug p1" << std::endl;
+			// next mensch turn
+			proceed = players[0]->spielzug(*karte, path);		// testen
+			gameOver(proceed);
+			/*
+			std::cout << "spielzug p1,wohin?" << std::endl;
+			std::cout << "liste" << std::endl;
+			for (auto node : karte->getNodes())std::cout << node->getID() << std::endl;
+
 			std::cin >> choose;
 			choose = checkInput(choose);
 			// turn = players[0]->spielzug()
@@ -68,7 +61,7 @@ void UI::menu(/*Graph& karte,Spieler bla, Node& schatz,Node& start*/)
 			output "won" + end game 
 			} 
 			-> get route ->
-			} */
+			} 
 
 			if (kosten <= players[0]->getGeld()) {
 			//mensch.walkTo(turn);// walkTo in Spieler.h schreiben
@@ -84,7 +77,10 @@ void UI::menu(/*Graph& karte,Spieler bla, Node& schatz,Node& start*/)
 				players[0]->setStandort(*turn);
 			}
 			deleteTurn(path);
-			
+			*/
+
+			// next KI turn
+
 			/* input zielnode für KI == random  -> dijkstra
 			-> if(genug taler){
 			walk/calculate route 
@@ -95,17 +91,19 @@ void UI::menu(/*Graph& karte,Spieler bla, Node& schatz,Node& start*/)
 			} 
 			*/
 			break;
+		// case 3,5: Statusausgabe spieler+ ki   ---> OPTIONAL
 		case 4:
 			//beenden
 			delete karte;
 			players.clear();
-			break;
+			gameOver(0);
+			return;
 		case 5:
 			printMenu();
-			system("clear");
+			system("cls");
 			std::cout << "Bildschirm bereinigt!" << std::endl;
 		default:
-
+			std::cerr << "\t\t\tFehler: Bitte 1-5 waehlen!" << std::endl;
 			break;
 		}
 	}
@@ -115,8 +113,8 @@ void UI::menu(/*Graph& karte,Spieler bla, Node& schatz,Node& start*/)
 
 Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& players)
 {
-	//source https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
-	//source http://www.cplusplus.com/reference/string/string/
+	//inspired by: https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
+	//source: http://www.cplusplus.com/reference/string/string/
 
 	Node* schatz = nullptr;
 	std::ifstream file(filename);
@@ -131,25 +129,26 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 	std::string token2;
 	size_t position = 0;
 
-	//file.open(filename);
-	if (file.is_open()/*&& !(file.eof())*/) {
+	if (file.is_open()) {
 	
 		while (std::getline(file, line)) {
 			token = line.substr(0, line.find(delimiter));
-			position = token.size()+1;
+			position = token.size();
 			if (token == "Insel") {													// ok
 				token = line.substr((position+1), line.find(delimiterEnd));
 				karte.addNode(new Node(token));
 			}
 			else if (token == "Lager") {								
 				int gold;
-				token = line.substr(position, line.find(delimiter));		// substr korrigieren
-				token2 = line.substr((position + 1 + token.size()), line.find(delimiterEnd));
-				gold = std::stoi(token2); // hier wird exception geworfen
-
+													// ok
+				token = line.substr(line.find(delimiter) + 1, line.find(delimiter, line.find(delimiter) + 1) - (line.find(delimiter) + 1));		// substr korrigieren
+				token2 = line.substr(line.find(delimiter, line.find(delimiter) + 1) + 1 , line.find(delimiter, line.find(delimiter, line.find(delimiter) + 1) + 1) - (line.find(delimiter, line.find(delimiter) + 1)));
+				gold = std::stoi(token2); 
+				
 				for (auto node : karte.getNodes()) {
 					if (node->getID() == token) {
 						node->setGold(gold);
+						//std::cout << node->getID() << "hat" << node->getGold() << std::endl;
 					}
 				}
 			}
@@ -162,7 +161,7 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 				token = line.substr(line.find(delimiter)+1, line.find(delimiter,line.find(delimiter)+1)- (line.find(delimiter) + 1)); //substr( posi= 1. LZ , länge = 2. LZ - 1. LZ )
 				token2 = line.substr(line.find(delimiter, line.find(delimiter)+1)+1, line.find(delimiterEnd)); 
 				// substr(startpkt,länge) | line.find(delimiter, line.find(delimiter)+1) = 2. delimiter !!
-																	
+				// line.find(delimiter,line.find(delimiter,line.find(delimiter)+1)+1)  // pos 3												
 				n2 = new Node(token2);			
 
 				for (auto node : karte.getNodes()) { 
@@ -183,34 +182,35 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 				}
 				Edge *e = new Verbindung(kind, *n1, *n2);
 				karte.addEdge(e);
-				std::cout << e->toString() << std::endl;
+				//std::cout << e->toString() << std::endl;
 
 				e = new Verbindung(kind, *n2, *n1);
 				karte.addEdge(e);
-				std::cout << e->toString() << std::endl;
+				//std::cout << e->toString() << std::endl;
 			}
 			else if (token == "Schatz") {			// ok
-				token = line.substr(position, line.find(delimiterEnd));
+				token = line.substr(position+1, line.find(delimiterEnd));
 
 				for (auto node : karte.getNodes()) {
 					if (node->getID() == token) {
+						node->setGoal(1);
 						schatz = node;
 					}
 				}
 			}
-			else if (token == "Mensch"|| token == "Computer") {
+			else if (token == "Mensch"|| token == "Computer") {	// ok
 				Spieler *p = nullptr;
 				std::string kind = token;
 				int gold;
 				Node *start = nullptr;		
 				std::string name = token;
 
-				token = line.substr(position, line.find(delimiterEnd)); // // substr korrigieren
-				token2 = line.substr((position + 1 +  token.size()), line.find(delimiter)); // // substr korrigieren
+				token = line.substr(line.find(delimiter) + 1, line.find(delimiter, line.find(delimiter) + 1) - (line.find(delimiter) + 1)); 
+				token2 = line.substr(line.find(delimiter, line.find(delimiter) + 1) + 1, line.find(delimiter, line.find(delimiter, line.find(delimiter) + 1) + 1) - (line.find(delimiter, line.find(delimiter) + 1)));
 				gold = std::stoi(token2);
 
 				for (auto node : karte.getNodes()) {
-					if (node->getID() == token2) {
+					if (node->getID() == token) {
 						start = node;
 					}
 				}
@@ -218,28 +218,38 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 				players.push_back(p);
 			}
 			else {
-			//throw "cannot read file ( unknown keywords) " 
+			//throw "cannot read file ( unknown keywords )";
 			}
-			// test ab hier
-
-			// for (auto node : karte.getNodes())std::cout << node->getID() << std::endl;
-			// for (auto node : karte.getNodes())std::cout << node->getGold() << std::endl;
-			// for (auto node : karte.getNodes())std::cout << node->isGoal() << std::endl;
-			// for (auto edge : karte.getEdges())std::cout << edge->toString() << std::endl;
-
 		}
 	}
-	else{ // oder if, wenns nich geht
-		std::cout << "file was closed / is empty" << std::endl;		// später throw 
+	else{ 
+		// throw line = "file was closed / is empty";
+		std::cerr << "file was closed / is empty" << std::endl;		// später throw 
 	}
 	file.close();
 	return schatz;
 }
 
 std::string UI::checkInput(std::string input)
-{	
+{	// bal.txt
 	// check auf string + "." + "txt"
 	// hier string zerteilen und check
+	std::string temp,temp2;
+
+	temp = input.substr(0, input.find("."));
+	temp2 = input.substr(input.find("."), (input.length() - temp.length()));
+
+	while(!((temp.length() > 1) && (temp2 == "txt"))) {
+		std::cin.clear();
+		std::cin.ignore(30, '\n');
+		std::cerr << "Aus der Eingabe ist keine .txt - Datei herauszufiltern! " << std::endl;
+		std::cout << "\tEingabe: ";
+		std::cin >> input;
+	}
+	temp = input.substr(0, input.find("."));
+	temp2 = input.substr(input.find("."), (input.length() - temp.length()));
+	input = temp + temp2;
+	return input;
 	/*
 	while (std::cin.fail()) {
 		std::cin.clear();
@@ -255,12 +265,11 @@ std::string UI::checkInput(std::string input)
 		std::cin >> input;
 		
 	}*/
-	return input;
 }
 
 int UI::checkInput(int input)
 {
-	while ((input < 0) || (std::cin.fail())) {
+	while ((input <= 0) || (std::cin.fail())) {
 		std::cin.clear();
 		std::cin.ignore(30, '\n');
 		std::cerr << "\t\t\tFehler: Bitte eine positive Zahl eingeben: " << std::endl;
@@ -270,47 +279,17 @@ int UI::checkInput(int input)
 		return input;
 }
 
-void UI::printMap(Graph & karte)
-{
-	// display karte -> node names,  neighbors of nodes & which kind, no lager/schatz
-	// == print nodes, edges , no treasure , no camp
-	// << std::fixed << std::setprecision(2) == dezimal auf 2 stellen (nach komma?)
-	const char seperate = ' ';
-	const char seperate2 = '-';
-	const int width = 8;
-	const int widthField = 40;
-	const int widthNode = 12;
-	std::ostringstream out;
-
-	out << " " << std::setw(widthField)<< std::setfill(seperate2) <<" "<< std::endl <<
-
-	"| " << std::setw(widthField) << std::setfill(seperate) << "Inseln: | " << std::endl <<
-	"| " << std::endl <<
-	"| " << std::endl <<
-	"| " << std::endl <<
-	"| " << std::endl <<
-	"| " << std::endl <<
-	"| " << std::endl <<
-
-
-		  " " << std::setw(widthField) << std::setfill(seperate2) << " " << std::endl;
-
-	std::cout << out.str();
-}
-
 void UI::setnameofPlayer(Spieler & mensch, std::string name)
 {
 	mensch.setName(name);
 }
-
 bool UI::foundTreasure(Node& location)
 {
-	if (location.isGoal()){
+	if (location.isGoal()) {
 		return true;
 	}
 	return false;
 }
-
 void UI::printMenu()
 {
 	// format via stringstream !
@@ -323,25 +302,12 @@ void UI::printMenu()
 	Sleep(500);
 	std::cout << "\t\t\t[4] ->  [             Spiel beenden           ]  <-\n" << "\t\t\t[5] ->  [                  Bildschirm bereinigen & Auswahl anzeigen                  ]  <-\n" << std::endl;
 }
-
-bool UI::isLager(Node& lager)
-{
-	// evtl vererbung node auf insel mit m_vari bool lager
-	// und 2 x static int für die 2 werte
-	/*
-	if (lager.getLagerState())
-	{
-		lager.sethiddenmoney(0);
-		return true;
-	}*/
-	return false;
-}
-
+/*
 void UI::printTurn(std::deque<Node*>& actualRoute, double kosten, Node& dest, Spieler& mensch) {
-	std::cout << "\n\t\t\tRoute: ";
+	std::cout << "\n\t\t\t Zurueckgelegter Pfad: ";
 	for (auto node : actualRoute) {
 		if (dest.getID() == node->getID()) {
-			std::cout << node->getID() << "(= Zielort)" << std::endl;
+			std::cout << node->getID() << "(= aktueller Standort)" << std::endl;
 		}
 		else {
 			std::cout << node->getID() << " --> ";
@@ -354,16 +320,44 @@ void UI::printTurn(std::deque<Node*>& actualRoute, double kosten, Node& dest, Sp
 
 void UI::deleteTurn(std::deque<Node*>& actualRoute){
 	actualRoute.clear();
-}
+}*/
 void UI::printIntro()
-{	// improive text
-	std::cout << "Willkommen in der Welt von Kimoran \n Spielregeln \n Info: Die Standartspielkarte wurde geladen." << std::endl;
+{	// improve text:
+	// ostringstream out; 
+	// alles auf out << "...\n" 
+	// delay(out.str());
+	std::cout << "Willkommen in der Welt von Kimoran" << std::endl;
+	std::cout << "Spielregeln & Informationen:" << std::endl;
+	std::cout << "Spielregeln:" << std::endl;
+	std::cout << "Kimoran ist eine geheimnisvolle Welt, die aus vergessenen Inseln besteht welche mit morschen Bruecken, alten, aber \n" <<
+		"extrem schnellen Faehrwegen und einsturzgefaehrdeten Tunneln verbunden sind. \n" <<
+		"Auf einer dieser der Inseln gibt es einen Schatz von galaktischem Ausmass. Wer diesen zuerst entdeckt hat nicht nur \n" <<
+		"das Spiel gewonnen, sondern wird bis in alle Ewigkeit in Reichtum verweilen. Praktisch ! " << std::endl;
+	std::cout << "Man gelangt von Insel zu Insel, indem man sich ueber die Bruecken, durch die Tunnel \n" <<
+		"oder mithilfe von Faehren fortbewegt. Das ist natuerlich nicht gratis! ( Warum solltes es auch ? ) Für jede \n" <<
+		"dieser Passagen sind Zoelle oder Transportkosten zu entrichten, denn auch im Kimoran ist der Kapitalismus schon\n" <<
+		" vor Jahrhunderten eingekehrt. Gut ist, dass alle Verbindungen in beide Richtungen nutzbar sind, schlecht ist, dass jede \n" <<
+		"neue Ueberquerung wieder einige Taler kostet. Noch schlechter ist, dass Sie gegen eine nahezu unschlagbare KI antretetn werden, \n" <<
+		"die auch auf der Suche nach ewigem Reichtum ist. ( Zitat der KI: \"I SUPERIOR, U SLAVE !!!\" ) \n" <<
+		"Tja, es geht immerhin um den Schatz der Schaetze und nicht um neue Freundschaften. Dafuer ist hier immer so richtig schoenes Wetter. Also dann, viel Spass!" << std::endl;
+	std::cout << "\n\nInformationen:" << std::endl;
+	std::cout << "Kosten fuer Bruecken & Faehren: 3 Taler" << std::endl;
+	std::cout << "Kosten fuer Tunnel: 5 Taler" << std::endl;
+	std::cout << "Startkapital: 30 Taler" << std::endl;
+	std::cout << "Versteckte Lager mit Talern: 2" << std::endl;
+	std::cout << "( Diese Informationen gelten nur für die Standart-Karte von Kimoran !)" << std::endl;
 }
 void UI::printInfo()
 {
 	// anfangs ( nach regeln in UI ) printen
 	// gibt anleitung, dass reihenfolge bei eigenen txt eingehalten werden soll
 	// grund: spieler brauchen Node als startpunkt
+
+	std::cout << "Information zu eigenen geladenen Textdateien:" << std::endl;
+	std::cout << "Es koennen beliebig Objekte im VORHANDEN FORMAT hinzugefuegt werden. " << std::endl;
+	std::cout << "Es koennen ( noch ) KEINE Spieler hinzugefügt werden." << std::endl;
+	std::cout << "Das hinzufügen weiterer Schaetze wird vom Programmierer nicht geschaetzt." << std::endl;
+
 }
 void UI::delay(std::string a)
 {
@@ -372,6 +366,71 @@ void UI::delay(std::string a)
 		std::cout << a[i];
 		Sleep(20);
 	}
+}
+void UI::MapMenu(Graph & karte)
+{
+	int choose;
+	Verbindung * kind = nullptr;
+
+	printMapMenu();
+	while (1) {
+		std::cout << "Bitte Aktion waehlen:" << std::endl;
+		std::cin >> choose;
+		choose = checkInput(choose);
+
+		switch (choose) {
+
+		case 1:
+			for (auto node : karte.getNodes())std::cout << node->getID() << std::endl;
+			break;
+		case 2:
+			for (auto edge : karte.getEdges()) { 
+				kind = dynamic_cast<Verbindung*>(edge);		// evtl static_cast<>
+				if (kind->getVID() == 'B') {
+					std::cout << edge->toString() << std::endl;
+				}
+			}
+			break;
+		case 3:
+			for (auto edge : karte.getEdges()) {
+				kind = dynamic_cast<Verbindung*>(edge);
+				if (kind->getVID() == 'T') {
+					std::cout << edge->toString() << std::endl;
+				}
+			}
+			break;
+		case 4:
+			for (auto edge : karte.getEdges()) {
+				kind = dynamic_cast<Verbindung*>(edge);
+				if (kind->getVID() == 'F') {
+					std::cout << edge->toString() << std::endl;
+				}
+			}
+			break;
+		case 5:
+			std::cerr << "Dieses Feature ist noch nicht verfügbar!" << std::endl;
+			break;
+		case 6:
+			std::cout << "...gehe zurueck." << std::endl;
+			return;
+		default:
+			std::cerr << "\t\t\tFehler: Bitte 1-6 waehlen!" << std::endl;
+			break;
+		}
+	}
+}
+void UI::printMapMenu()
+{// format via stringstream !
+	Sleep(500);
+	std::cout << "\n\t\t\t    ->  [            Ausgabe waehlen             ]  <- \n" << std::endl;
+	Sleep(500);
+	std::cout << "\n\t\t\t    ->  [    Bitte Aktion via Nummerierung waehlen   ]  <- \n\n" << "\t\t\t[1] ->  [        Inseln ausgeben       ]  <-\n";
+	Sleep(500);
+	std::cout << "\t\t\t[2] ->  [                  Alle Bruecken                 ]  <-\n";
+	Sleep(500);
+	std::cout << "\t\t\t[3] ->  [            Alle Tunnel        ]  <-\n" << "\t\t\t[4] ->  [                 Alle Faehren                  ]  <-\n";
+	std::cout << "\t\t\t[5] ->  [             Gesamte Karte          ]  <-\n" << "\t\t\t[6] ->  [               Zurueck            ]  <-\n" << std::endl;
+
 }
 UI::UI()
 {

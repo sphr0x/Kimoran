@@ -2,6 +2,8 @@
 
 
 
+
+
 void UI::dateiEinlesen()
 {
 }
@@ -114,7 +116,7 @@ void UI::menu(/*Graph& karte,Spieler bla, Node& schatz,Node& start*/)
 Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& players)
 {
 	//source https://stackoverflow.com/questions/14265581/parse-split-a-string-in-c-using-string-delimiter-standard-c
-	//source http://www.cplusplus.com/reference/string/string/size/
+	//source http://www.cplusplus.com/reference/string/string/
 
 	Node* schatz = nullptr;
 	std::ifstream file(filename);
@@ -127,7 +129,6 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 	*/
 	std::string token;
 	std::string token2;
-	std::string addLength;
 	size_t position = 0;
 
 	//file.open(filename);
@@ -135,16 +136,16 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 	
 		while (std::getline(file, line)) {
 			token = line.substr(0, line.find(delimiter));
-			position = token.size();
+			position = token.size()+1;
 			if (token == "Insel") {													// ok
 				token = line.substr((position+1), line.find(delimiterEnd));
 				karte.addNode(new Node(token));
 			}
 			else if (token == "Lager") {								
 				int gold;
-				token = line.substr((position+1), line.find(delimiter)); // hier weder find noch rfind -> has 2be solved !
-				token2 = line.substr((position + 2 + token.size()), line.rfind(delimiter));
-				gold = std::stoi(token2);
+				token = line.substr(position, line.find(delimiter));		// substr korrigieren
+				token2 = line.substr((position + 1 + token.size()), line.find(delimiterEnd));
+				gold = std::stoi(token2); // hier wird exception geworfen
 
 				for (auto node : karte.getNodes()) {
 					if (node->getID() == token) {
@@ -157,13 +158,10 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 				Node *n1 = nullptr;
 				Node *n2 = nullptr;
 
-				//addLength = token +
-
-				kind = token.front();
-				token = line.substr((position + 1), line.find(delimiter));		// hier fehler: token findet immer den _ersten_ delimiter -> substr(a,b) a anpassen und b anpassen
-				token2 = line.substr((position + 2 + token.size()), line.find(delimiterEnd));
-
-				// throwed hier iwann exception
+				kind = token.front();											// ok
+				token = line.substr(line.find(delimiter)+1, line.find(delimiter,line.find(delimiter)+1)- (line.find(delimiter) + 1)); //substr( posi= 1. LZ , länge = 2. LZ - 1. LZ )
+				token2 = line.substr(line.find(delimiter, line.find(delimiter)+1)+1, line.find(delimiterEnd)); 
+				// substr(startpkt,länge) | line.find(delimiter, line.find(delimiter)+1) = 2. delimiter !!
 																	
 				n2 = new Node(token2);			
 
@@ -185,11 +183,14 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 				}
 				Edge *e = new Verbindung(kind, *n1, *n2);
 				karte.addEdge(e);
+				std::cout << e->toString() << std::endl;
+
 				e = new Verbindung(kind, *n2, *n1);
 				karte.addEdge(e);
+				std::cout << e->toString() << std::endl;
 			}
-			else if (token == "Schatz") {
-				token = line.substr((position+1), line.find(delimiterEnd));
+			else if (token == "Schatz") {			// ok
+				token = line.substr(position, line.find(delimiterEnd));
 
 				for (auto node : karte.getNodes()) {
 					if (node->getID() == token) {
@@ -204,8 +205,8 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 				Node *start = nullptr;		
 				std::string name = token;
 
-				token = line.substr((position+1), line.find(delimiterEnd)); // not ok delim @
-				token2 = line.substr((position + 2 +  token.size()), line.find(delimiter)); // not ok
+				token = line.substr(position, line.find(delimiterEnd)); // // substr korrigieren
+				token2 = line.substr((position + 1 +  token.size()), line.find(delimiter)); // // substr korrigieren
 				gold = std::stoi(token2);
 
 				for (auto node : karte.getNodes()) {
@@ -224,7 +225,7 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 			// for (auto node : karte.getNodes())std::cout << node->getID() << std::endl;
 			// for (auto node : karte.getNodes())std::cout << node->getGold() << std::endl;
 			// for (auto node : karte.getNodes())std::cout << node->isGoal() << std::endl;
-			for (auto edge : karte.getEdges())std::cout << edge->getID() << std::endl;
+			// for (auto edge : karte.getEdges())std::cout << edge->toString() << std::endl;
 
 		}
 	}

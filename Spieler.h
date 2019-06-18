@@ -12,7 +12,7 @@ private:
 	std::string name;
 	Node* standort;
 public:
-	void spielzug();
+	Node* spielzug();
 	std::string getName() { return name; };
 	void setName(std::string name);
 	int getGeld() { return geld; };

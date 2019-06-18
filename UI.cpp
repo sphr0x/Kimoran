@@ -58,8 +58,8 @@ void UI::menu(/*Graph& karte,Spieler bla, Node& schatz,Node& start*/)
 			std::cout << "spielzug p1" << std::endl;
 			std::cin >> choose;
 			choose = checkInput(choose);
-			// input zielnode -> dijkstra
-			kosten = karte->findShortestPathDijkstra(path,*location,*turn);
+			// turn = players[0]->spielzug()
+			kosten = karte->findShortestPathDijkstra(path,*location,*turn); // in spielzug() rein?
 			/* if(genug taler){
 			walk/calculate route  
 			-> if(lager){

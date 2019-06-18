@@ -2,9 +2,18 @@
 
 
 
-void Spieler::spielzug()
+Node* Spieler::spielzug()
 {
 	// aus UI extrahieren
+
+	/*
+	Node* zug = nullptr;
+	zug = iwas 
+	void setGeld(int gold);
+	void setStandort(Node& location);
+	
+	return zug 
+	*/
 }
 
 void Spieler::setName(std::string name)

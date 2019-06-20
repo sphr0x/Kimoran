@@ -34,9 +34,6 @@ int main()
 
 	probleme : 
 	
-	berechnung der taler stimmt nicht -> 
-	+ statt - / double in int /
-
 	KI spielzug fehlt
 
 	9 statt 8 brücken
@@ -51,6 +48,12 @@ int main()
 
 	std::string UI::checkInput(std::string input):
 	(exception bei ungültigen eingaben)
+
+	printturn pfad ausgabe funktioniert nicht, evtl pointer übergeben ?
+
+	nach jedem zug clear screen, aktueller standort, aktuelles geld ausgeben und aktuelles menu zeigen
+
+	prüfen in datei ob min 1 "Schatz" vorhanden !
 
 */
 

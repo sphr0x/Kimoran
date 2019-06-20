@@ -31,7 +31,7 @@ void UI::menu(/*Graph& karte,Spieler bla, Node& schatz,Node& start*/)
 		switch (choose) {
 
 		case 1:
-			// hier fehlt noch graph.clear()
+			// hier fehlt noch delete Graph; Graph* karte = new Graph;
 			printInfo();
 			std::cout << "bitte file" << std::endl;
 			std::cin >> filename;
@@ -94,14 +94,14 @@ void UI::menu(/*Graph& karte,Spieler bla, Node& schatz,Node& start*/)
 			break;
 		// case 3,5: Statusausgabe spieler+ ki   ---> OPTIONAL
 		case 4:
-			//beenden
+			//beenden text schreiben
 			delete karte;
 			players.clear();
 			gameOver(0);
 			return;
 		case 5:
-			printMenu();
 			system("cls");
+			printMenu();
 			std::cout << "Bildschirm bereinigt!" << std::endl;
 		default:
 			std::cerr << "\t\t\tFehler: Bitte 1-5 waehlen!" << std::endl;
@@ -129,7 +129,10 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 	std::string token;
 	std::string token2;
 	size_t position = 0;
-
+	
+	if (!file.is_open()) {
+		throw "iwas";
+	}
 	if (file.is_open()) {
 	
 		while (std::getline(file, line)) {
@@ -219,7 +222,7 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 				players.push_back(p);
 			}
 			else {
-			//throw "cannot read file ( unknown keywords )";
+			throw "cannot read file ( unknown or missing keywords )";
 			}
 		}
 	}
@@ -232,25 +235,28 @@ Node* UI::readMAP(Graph& karte, std::string& filename,std::vector<Spieler*>& pla
 }
 
 std::string UI::checkInput(std::string input)
+	//  funktion komplett weg, da jede file geöffnet werden kann, only check auf leeren string !!!
+
 {	// bal.txt
 	// check auf string + "." + "txt"
 	// hier string zerteilen und check
 	std::string temp,temp2;
 
 	temp = input.substr(0, input.find("."));			// so noch except = fkt für not find ?
-	if (!(input.find("."))) {	
+	if (input.npos) {	
 		temp = "nix";
 		temp2 = "iwas";
 	}
-	temp2 = input.substr(input.find("."), (input.length() - temp.length())); 
-
+	else {
+		temp2 = input.substr(input.find("."), (input.length() - temp.length()));
+	}
 	// wenn kein . drinne -> temp2 exception
 	//nur .txt-> ok
 	// iwas.txt -> ok
-	while(!((temp.length() > 1) && (temp2 == ".txt"))) {
+	while(!(temp.length() > 1) && !(temp2 == ".txt")) {		// bedingung stimmt nicht,
 		std::cin.clear();
 		std::cin.ignore(30, '\n');
-		std::cerr << "Aus der Eingabe ist keine .txt - Datei herauszufiltern! " << std::endl;
+		std::cerr << "Aus der Eingabe ist keine  oder keine vorhandene .txt - Datei herauszufiltern! " << std::endl;
 		std::cout << "\tEingabe: ";
 		std::cin >> input;
 	}

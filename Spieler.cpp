@@ -51,6 +51,11 @@ int Spieler::spielzug(Graph& karte, std::deque<Node*>& path)
 			printTurn(path, kosten, *ziel);	// route anzeigen
 			deleteTurn(path);
 		}
+		else {
+			std::cout << this->name << ", also DU, hast keinen mueden Penny mehr...\n" <<
+				"Die uebermaechtige KI gewinnt!\n\n\n" << "Vielen Dank fuers Spielen !" << std::endl;
+			return 0;
+		}
 		return 1;
 	}
 
@@ -62,7 +67,7 @@ void Spieler::setName(std::string name)
 
 void Spieler::setGeld(int gold)
 {
-	this->geld += gold;
+	this->geld = gold;
 }
 
 Node * Spieler::getStandort()

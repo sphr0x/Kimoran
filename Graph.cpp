@@ -38,11 +38,13 @@ Node& Graph::addNode(Node* pNewNode){
 	//  - den neuen Node 'pNewNode' in m_nodes einfügen
 	//  - Referenz auf den neuen Node zurück geben
 
+	
 	for (auto it = m_nodes.begin(); it != m_nodes.end(); ++it) {				// works
 		if (pNewNode->getID() == (*it)->getID()) {
 			throw("exc");
 		}
 	}
+	
 	m_nodes.push_back(pNewNode);
 	return *pNewNode;
 	

@@ -1,17 +1,12 @@
 #include "Verbindung.h"
 
-
-
-Verbindung::Verbindung(char id, Node & rSrc, Node & rDst) 
-	:Edge(rSrc, rDst), id('B'),m_kosten(3){
-	if (id == ('B' || 'F')) {
+Verbindung::Verbindung(std::string newID, Node & rSrc, Node & rDst)
+:Edge(rSrc, rDst), m_mid(newID), m_kosten(3) {
+	if ((newID == "Bruecke") || (newID == "Faehre"))
 		this->m_kosten = 3;
-	}
-	else if (id == 'T')
+	if (newID == "Tunnel")
 		this->m_kosten = 5;
 }
-
-
 Verbindung::~Verbindung()
 {
 }

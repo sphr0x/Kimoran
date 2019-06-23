@@ -5,56 +5,44 @@
 #include "Verbindung.h"
 #include "UI.h"
 
+						/*		###	Projektaufgabe: Schatzsuche in Kimoran	###		*/
 
-
-int main()
-{
+int main(){
 	UI prog;
 
-	/*
-	std::string a = "C23_Projekt_19SS_Inseln.txt";		// test build graph+player -> ok !
-	Graph* karte = new Graph;
-	std::vector<Spieler*> players;
-	prog.readMAP(*karte,a,players);
-	for (auto edge : karte->getEdges()) std::cout << edge->toString() << std::endl;
-	delete karte;
-	*/
-
-
-	prog.menu();
+	prog.menu2();
 	system("pause");
 	return 0;
 }
-/* 2do
 
-	(EVTL srand(time(NULL)); für richtigen random generator use.
-	exceptions)
+/*
+	2do:
+
+	 UI::readMAP
+	 : no value lager -> kein throw
+
+*/
+
+/*	
+	mögliche Stil - Verbesserung
+	: m_membervari
+	: s_staticmember  // zugriff auf s_xxx NUR mit Klasse::s_xxx
+	: float vor double, bei kleinen datenwerten ( float a = 0.006f )
+	: Eigene Klassen sollten nur in eine Richtung implizit konvertierbar sein. Das Schlüsselwort
+	  explizit sollte bewusst eingesetzt werden. ( ??? )
+	: virtual bei basis fkt, die überschrieben werden
+	: Fehler nur mit exceptions abfangen -> eigene Exceptionklasse -> klasse werfen
+	: versuchen nichts doppelt schreiben zu müssen
+
+	speziell hier 
+	: class Insel von node ableiten
+
+*/
 
 
-
-	probleme : 
-	
-	KI spielzug fehlt
-
-	9 statt 8 brücken
-
-	alle tunnel geht nicht
-
-	alle fähren geht nicht
-
-	case 1 fix:
-
-	delete graph, sonst double node push etc.
-
-	std::string UI::checkInput(std::string input):
-	(exception bei ungültigen eingaben)
-
-	printturn pfad ausgabe funktioniert nicht, evtl pointer übergeben ?
-
-	nach jedem zug clear screen, aktueller standort, aktuelles geld ausgeben und aktuelles menu zeigen
-
-	prüfen in datei ob min 1 "Schatz" vorhanden !
-
+/*		
+	Vorgegebene Datei: projekt.txt
+	Testdatei:			 insel.txt
 */
 
 

@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Exception">
+    <Position X="2.5" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAABAAAAEAAAAAAAAAAAAAAAAAAABAAABAAAAAAQA=</HashCode>
+      <FileName>Exception.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Filereading">
+    <Position X="4.25" Y="4.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAQAAAAQAAAAAAAAAAAAAAAAAAABA=</HashCode>
+      <FileName>Filereading.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Insel">
+    <Position X="0.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAAAAAABQYAABAQAAAAAAAAAAEAA=</HashCode>
+      <FileName>Insel.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Spieler">
+    <Position X="3.5" Y="0.5" Width="1.25" />
+    <TypeIdentifier>
+      <HashCode>EAAAQAAAAIAAAAAAAAAAAABAADwAQAhAAAAFAAgAACA=</HashCode>
+      <FileName>Spieler.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="UI">
+    <Position X="0.5" Y="3.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>ACAAAAAggAAAQAAAEAABAAgIAAAAAAAgAAgAAIAAEII=</HashCode>
+      <FileName>UI.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Verbindung">
+    <Position X="2" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAACAAAAgQAAAAAAAAAAAgAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Verbindung.h</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

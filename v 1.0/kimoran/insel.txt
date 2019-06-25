@@ -1,0 +1,38 @@
+Insel Kimoran_Berg
+Insel Askhora
+Insel Beramorin
+Insel Ostergaard
+Insel Uthenwold
+Insel array
+Insel deque
+Insel list
+Insel map
+Insel stack
+Insel Tierpark
+Insel Zoo
+Insel Muellhaus
+Faehre Zoo array
+Bruecke Tierpark Ostergaard
+Tunnel Muellhaus Uthenwold
+Bruecke map Muellhaus
+Tunnel Askhora array
+Faehre array list
+Bruecke list deque
+Tunnel Askhora map
+Faehre Ostergaard stack
+Tunnel Kimoran_Berg Askhora
+Tunnel Beramorin Ostergaard
+Bruecke Kimoran_Berg Askhora
+Bruecke Askhora Ostergaard
+Faehre Askhora Uthenwold
+Faehre Uthenwold Kimoran_Berg
+Tunnel Beramorin Askhora
+Bruecke Ostergaard Beramorin
+Bruecke Beramorin Kimoran_Berg
+Schatz array
+Lager Ostergaard 14 Taler
+Lager Uthenwold 9 Taler
+Lager list 6 Taler
+Lager Zoo 8 Taler
+Mensch Kimoran_Berg 21 Taler
+Computer Kimoran_Berg 21 Taler

@@ -1,0 +1,151 @@
+https://creately.com/app/?tempID=h165rwt81&login_type=demo#
+
+
+Graph
+--
+- m_nodes : std::list<Node*>
+- m_edges : std::list<Edge*>
+--
++ addNode : Node&  
++ addEdge : Edge& 
++ remove : void
++ remove : void
++ getNodes : const std::list<Node*>&
++ getEdges : const std::list<Edge*>&
++ findNode : Node*
++ findEdges : std::vector<Edge*>
++ findShortestPathDijkstra : double 
++ minHelper : Node*
++ neighborHelper : std::list<Node*>
++ minVector : double
++ isInQueue : bool
+// This is a comment
+// (--) This is a section break
+// Line break (\n) enter in-between text for line break
+
+Edge
+--
+- m_rSrc : Node&
+- m_rDst  : Node&
+--
++ Edge(Node& rSrc, Node& rDst);
++ Edge(const Edge& rOther);
++ ~Edge : virtual
++ isConnectedTo [const] : bool
++ getSrcNode : Node&
++ getDstNode : Node&
++ toString [const] : std::string 
++ getWeight : virtual double
+// This is a comment
+// (--) This is a section break
+// Line break (\n) enter in-between text for line break
+
+Node
+--
+- m_id : std::string
+- m_outgoingEdges : std::list<Edge*>
+- m_incomingEdges : std::list<Edge*>
+- s_numInstances : static int
+--
++ Node()
++ Node(std::string id)
++ ~Node : virtual
++ getID : std::string
++ getOutEdges :  std::list<Edge*>&
++ getInEdges :  std::list<Edge*>&
+// This is a comment
+// (--) This is a section break
+// Line break (\n) enter in-between text for line break
+
+UI
+--
++ getStart : Insel*
++ checkInput :  int
++ checkInputGameplay :  int
++ printIntro : std::string 
++ printInfo : std::string 
++ delay : void
++ MapMenu : void
++ printMapMenu : std::string
++ gameOver : bool 
++ menu2 : void
++ menu3 : void
++ gameplay : void
++ UI
++ ~UI
+// This is a comment
+// (--) This is a section break
+// Line break (\n) enter in-between text for line break
+
+Filereading
+--
++ readMAP : Insel*
++ Filereading
++ ~Filereading
+// This is a comment
+// (--) This is a section break
+// Line break (\n) enter in-between text for line break
+
+Insel
+--
+- m_gold : int
+- m_goal : bool
+--
++ setGold : void
++ getGold : int
++ setGoal : void
++ isGoal :  bool
++ Insel(std::string id);
++ Insel()
++ ~Insel
+// This is a comment
+// (--) This is a section break
+// Line break (\n) enter in-between text for line break
+
+Verbindung
+--
+- m_kosten : int
+- m_mid : std::string
+--
++ getWeight : double
++ getMID : std::string
++ Verbindung
++ ~Verbindung
+// This is a comment
+// (--) This is a section break
+// Line break (\n) enter in-between text for line break
+
+Exception
+--
+- m_error : std::string 
+--
++ getError [const] : std::string
++ setError : void
++ Exception(std::string error)
++ Exception()
++ ~Exception()
+// This is a comment
+// (--) This is a section break
+// Line break (\n) enter in-between text for line break
+
+Spieler
+--
+- m_geld : int 
+- m_name : std::string 
+- m_standort : Insel* 
+--
++ getName : std::string
++ setName : void
++ getGeld : int 
++ setGeld : void
++ getStandort : Insel*
++ setStandort : void
++ setLocation : Insel*
++ isLager2 : int
++ printTurn : void 
++ deleteTurn : void 
++ Spieler(Insel& start, int taler, std::string eingabe = "KI")
++ ~Spieler()
+// This is a comment
+// (--) This is a section break
+// Line break (\n) enter in-between text for line break

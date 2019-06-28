@@ -245,15 +245,6 @@ void UI::gameplay(Graph & karte, std::vector<Spieler*> players, Insel & ziel)			
 		system("cls");
 
 		kosten = karte.findShortestPathDijkstra(path, *player->getStandort(), *dest);
-		for (auto node : path) {															// convert Node to Insel
-			convertedPath.push_back(dynamic_cast<Insel*>(node));
-		}
-		if (player->getGeld() <= 2) {														// out of money ?
-			std::cout << "[ " << player->getName() << " hat keinen mueden Penny mehr... und hat verloren. Schade, schade... ]\n\n" <<
-				"[ Vielen Dank fuers Spielen ! ]" << std::endl;
-			system("pause");
-			break;
-		}
 		if (kosten == std::numeric_limits<double>::infinity()) {																// no connection to treasure ?
 			std::cerr << "[ Seit des Flugverbotes in Kimoran gibt es zu dieser Insel keine Verbindung mehr. " << player->getName() <<
 				" hat seinen Zug vertan... ]" << std::endl;
@@ -265,9 +256,19 @@ void UI::gameplay(Graph & karte, std::vector<Spieler*> players, Insel & ziel)			
 			}
 			system("pause");
 		}
+		if (player->getGeld() <= 2) {														// out of money ?
+			std::cout << "[ " << player->getName() << " hat keinen mueden Penny mehr... und hat verloren. Schade, schade... ]\n\n" <<
+				"[ Vielen Dank fuers Spielen ! ]" << std::endl;
+			system("pause");
+			break;
+		}
+		std::deque<Insel*> convertedPath;
+		for (auto node : path) {															// convert Node to Insel
+			convertedPath.push_back(dynamic_cast<Insel*>(node));
+		}
 		if (kosten <= player->getGeld()) {													// is turn possible ?
 			player->setStandort(*dest);														// new src = old dst
-			player->setGeld(player->getGeld() - kosten);									// set geld
+			player->setGeld(player->getGeld() - static_cast<int>(kosten));									// set geld
 			if (dest->getID() == ziel.getID()) {											// is treasure ?
 				srand(time(NULL));
 				int n = rand() % 10000 + 0;
@@ -277,17 +278,16 @@ void UI::gameplay(Graph & karte, std::vector<Spieler*> players, Insel & ziel)			
 				break;
 			}
 
-			pathCopy = convertedPath;
 			/*
 			for (auto node : convertedPath)std::cout << node->getID() << std::endl;			// check path convertion -> works
 			for (auto node : pathCopy)std::cout << node->getID() << std::endl;
 			for (auto node : path)std::cout << node->getID() << std::endl;
 			*/
-			while (!convertedPath.empty()) {												// is lager ? 
+												// is lager ? 
 				foundGold = player->lootLagerOnPath(convertedPath);
-			}
+			
 			std::cout << "[ " << player->getName() << " ist am Zug: ]" << std::endl;
-			player->printTurn(pathCopy, kosten, *dest);										// print route
+			player->printTurn(convertedPath, kosten, *dest);										// print route
 			if (foundGold > 0) {
 				std::cout << "[ Unterwegs insgesamt " << foundGold << " Taler gefunden! Weiter geht die Suche! ]" << std::endl;
 			}

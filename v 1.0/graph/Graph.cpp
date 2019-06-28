@@ -33,7 +33,7 @@ Node& Graph::addNode(Node* pNewNode){
 
 	// Überprüfen Sie, ob schon ein Node mit der gegeben id im Graph vorhanden ist!
 	// Falls ja:
-	//  - Exception werfen
+	//  - KimoranException werfen
 	// Falls nein:
 	//  - den neuen Node 'pNewNode' in m_nodes einfügen
 	//  - Referenz auf den neuen Node zurück geben
@@ -182,7 +182,7 @@ double Graph::findShortestPathDijkstra(std::deque<Node*>& rPath, Node& rSrcNode,
 
 	for (auto node : m_nodes) {
 		queue.push_back(node);
-		distance[node] = 10000;
+		distance[node] = std::numeric_limits<double>::infinity();
 		previous[node] = nullptr;
 	}
 	distance[&rSrcNode] = 0;
@@ -214,7 +214,7 @@ double Graph::findShortestPathDijkstra(std::deque<Node*>& rPath, Node& rSrcNode,
 	// Helper for Dijkstra // working
 
 Node* Graph::minHelper(std::map<Node*, double>& map, std::list<Node*>& list){
-	double dist = 10001;
+	double dist = std::numeric_limits<double>::infinity();
 	Node* key = nullptr;
 
 	for (auto iwas : map) {
@@ -238,7 +238,7 @@ std::list<Node*> Graph::neighborHelper(Node& node){
 }
 
 double Graph::minVector(Node& source, Node& dest){
-	double result = 10002;
+	double result = std::numeric_limits<double>::infinity();
 	std::vector<Edge*> edgeV = findEdges(source, dest);
 
 	for (auto edge : edgeV) {

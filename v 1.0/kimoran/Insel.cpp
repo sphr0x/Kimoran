@@ -22,7 +22,14 @@ Insel::Insel(std::string id)
 {
 }
 
+Insel::Insel()
+{
+	this->m_goal = 0;
+	this->m_gold = 0;
+}
+
 
 Insel::~Insel()
 {
+
 }

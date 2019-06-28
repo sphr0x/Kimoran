@@ -27,11 +27,10 @@ private:
 	void delay(std::string a);																		// for RPG text speed
 	void MapMenu(Graph& karte);																		// map submenu: node / edge / back 
 	const std::string printMapMenu()const;
-	bool gameOver(bool end) { return end; };														// game over fkt
-	void menu3(Graph& karte, std::vector<Spieler*> players, Insel& ziel);							// 2nd menu: submenu map / play / quit				
+	void gameMenu(Graph& karte, std::vector<Spieler*> players, Insel& ziel);							// 2nd menu: submenu map / play / quit				
 	void gameplay(Graph& karte, std::vector<Spieler*> players, Insel& ziel);						// cpu / human turn
 public:
-	void menu2();																					// 1st menu: file / quit
+	void mainMenu();																					// 1st menu: file / quit
 	UI();
 	~UI();
 };

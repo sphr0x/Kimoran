@@ -13,7 +13,7 @@ public:
 	void setGoal(bool treasure);
 	bool isGoal()const { return m_goal; };
 	Insel(std::string id);
-	Insel() {};
+	Insel();
 	~Insel();
 };
 

@@ -1,5 +1,5 @@
-Insel Kimoran_Berg
 Insel Askhora
+Insel Kimoran_Berg
 Insel Beramorin
 Insel Ostergaard
 Insel Uthenwold
@@ -34,5 +34,5 @@ Lager Uthenwold 9 Taler
 Lager list 6 Taler
 Lager Zoo 8 Taler
 Schatz array
-Mensch Kimoran_Berg 21 Taler
+Mensch Zoo 21 Taler
 Computer Kimoran_Berg 21 Taler

@@ -11,7 +11,7 @@
 int main(){
 	UI prog;
 
-	prog.menu2();
+	prog.mainMenu();
 	system("pause");
 	return 0;
 }
@@ -42,7 +42,7 @@ int main(){
 	X eine insel-klasse statt der node - modifikation
 	X eine fileread klasse ( = parsing )
 	X eine exception klass
-	X UI einige funktionen in private verschieben ( alle, bis auf menu2 )
+	X UI einige funktionen in private verschieben ( alle, bis auf mainMenu )
 	X alle fkt, die nix verändern -> const
 	X ein gutes UML erstellen
 		X alle const raus
@@ -64,7 +64,7 @@ int main(){
 	X Gewanderter Pfad
 	X Beenden des Programms
 	X Zum Abfangen von falschen bzw. fehlerhaften Eingaben innerhalb der Menüs wird die Funktion "int UI::checkInput" bzw "int UI::checkInputGameplay" genutzt 
-	  und nicht das Exception-Prinzip.
+	  und nicht das KimoranException-Prinzip.
 		X 1-2 tests
 	)
 	X wenn out of money -> sofort beenden

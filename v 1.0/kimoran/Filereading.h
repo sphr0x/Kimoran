@@ -4,7 +4,7 @@
 #include "Spieler.h"
 #include <string>
 #include <stdexcept>			// class invalid_argument // std::atoi
-#include "Exception.h"
+#include "KimoranException.h"
 
 class Spieler;
 
@@ -12,7 +12,7 @@ class Filereading
 {
 public:
 	Insel* readMAP(Graph & karte, std::string& filename, std::vector<Spieler*>& players);			// einlesen von jeder datei
-	Filereading();
-	~Filereading();
+	Filereading() = default;
+	~Filereading() = default;
 };
 

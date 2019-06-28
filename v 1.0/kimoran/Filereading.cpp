@@ -26,7 +26,7 @@ Insel* Filereading::readMAP(Graph& karte, std::string& filename, std::vector<Spi
 	std::string token;
 	std::string token2;
 	std::string error = "";
-	Exception criticalError;
+	KimoranException criticalError;
 
 	size_t position = 0;
 
@@ -45,14 +45,14 @@ Insel* Filereading::readMAP(Graph& karte, std::string& filename, std::vector<Spi
 				karte.addNode(new Insel(token));
 			}
 			else if (token == "Lager") {
-				int gold;
+				int gold = 0;
 				token = line.substr(line.find(delimiter) + 1, line.find(delimiter, line.find(delimiter) + 1) - (line.find(delimiter) + 1));
 				token2 = line.substr(line.find(delimiter, line.find(delimiter) + 1) + 1, line.find(delimiter, line.find(delimiter, line.find(delimiter) + 1) + 1) - (line.find(delimiter, line.find(delimiter) + 1)));
 				
 				try {
 					gold = std::stoi(token2);
 				}
-				catch (std::invalid_argument& gold) {											// exception : wrong value for Lager-gold -> works
+				catch (const std::invalid_argument& e) {											// exception : wrong value for Lager-gold -> works
 					return nullptr;
 				}
 				if (gold <= 0) {
@@ -115,9 +115,8 @@ Insel* Filereading::readMAP(Graph& karte, std::string& filename, std::vector<Spi
 				}
 			}
 			else if (token == "Mensch" || token == "Computer") {
-				Spieler *p = nullptr;
 				std::string kind = token;
-				int gold;
+				int gold = 0;
 				Insel *start = nullptr;
 				std::string name = token;
 
@@ -126,7 +125,7 @@ Insel* Filereading::readMAP(Graph& karte, std::string& filename, std::vector<Spi
 				try {
 					gold = std::stoi(token2);
 				}
-				catch (std::invalid_argument& gold) {											// exception : wrong value for startgold -> works
+				catch (const std::invalid_argument& e) {											// exception : wrong value for startgold -> works
 					return nullptr;
 				}
 				if (gold <= 0) {
@@ -139,14 +138,12 @@ Insel* Filereading::readMAP(Graph& karte, std::string& filename, std::vector<Spi
 						start = dynamic_cast<Insel*>(node);
 						break;
 					}
-					else if(node->getID() != token) {
-						error = "[ Fehler: Kein Startpunkt gesetzt! ]";				// exception : wrong or no node to start from -> works
-						criticalError.setError(error);
-						throw criticalError;
-					}
 				}
-				p = new Spieler(*start, gold, name);
-				players.push_back(p);
+				if (start == nullptr) {
+					// exception : wrong or no node to start from -> works
+					throw KimoranException("[ Fehler: Kein Startpunkt gesetzt! ]");
+				}
+				players.push_back(new Spieler(*start, gold, name));
 			}
 			else {
 				error = "[ Fehler: Datei unlesbar ( unbekannte, doppelte oder fehlende Schluesselwoerter ) ! ]";	// exception : double treasure, Lager: no or wrong value -> works
@@ -177,14 +174,4 @@ Insel* Filereading::readMAP(Graph& karte, std::string& filename, std::vector<Spi
 	system("pause");
 	system("cls");
 	return schatz;
-}
-
-
-Filereading::Filereading()
-{
-}
-
-
-Filereading::~Filereading()
-{
 }

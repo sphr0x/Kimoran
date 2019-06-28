@@ -23,7 +23,7 @@ Insel * Spieler::setLocation(int & location, Graph& karte)
 	loc = dynamic_cast<Insel*>(*it2);
 	return loc;
 }
-int Spieler::isLager2(std::deque<Insel*>& path)
+int Spieler::lootLagerOnPath(std::deque<Insel*>& path)
 {
 	int change = 0;
 	for (auto node : path) {

@@ -22,7 +22,7 @@ public:
 	Insel* getStandort()const;
 	void setStandort(Insel& location);
 	Insel* setLocation(int& location, Graph& karte);								// sync nodes to position
-	int isLager2(std::deque<Insel*>& path);											// check if Lager is in path and set Lager gold to 0
+	int lootLagerOnPath(std::deque<Insel*>& path);											// check if Lager is in path and set Lager gold to 0
 	void printTurn(std::deque<Insel*>& actualRoute, double kosten, Insel& dest);
 	void deleteTurn(std::deque<Insel*>& actualRoute);
 	Spieler(Insel& start, int taler, std::string eingabe = "KI");

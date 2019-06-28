@@ -15,14 +15,14 @@ private:
 	std::string m_name;
 	Insel* m_standort;
 public:
-	std::string getName() { return m_name; };
+	std::string getName()const { return m_name; };
 	void setName(std::string name);
-	int getGeld() { return m_geld; };
+	int getGeld()const { return m_geld; };
 	void setGeld(int gold);
-	Insel* getStandort();
+	Insel* getStandort()const;
 	void setStandort(Insel& location);
-	Insel* setLocation(int& location, Graph& karte);
-	int isLager2(std::deque<Insel*>& path);
+	Insel* setLocation(int& location, Graph& karte);								// sync nodes to position
+	int isLager2(std::deque<Insel*>& path);											// check if Lager is in path and set Lager gold to 0
 	void printTurn(std::deque<Insel*>& actualRoute, double kosten, Insel& dest);
 	void deleteTurn(std::deque<Insel*>& actualRoute);
 	Spieler(Insel& start, int taler, std::string eingabe = "KI");

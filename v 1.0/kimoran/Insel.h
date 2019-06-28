@@ -9,9 +9,9 @@ private:
 	bool m_goal;
 public:
 	void setGold(int value);							// for kimoran
-	int getGold();
+	int getGold()const;
 	void setGoal(bool treasure);
-	bool isGoal() { return m_goal; };
+	bool isGoal()const { return m_goal; };
 	Insel(std::string id);
 	Insel() {};
 	~Insel();

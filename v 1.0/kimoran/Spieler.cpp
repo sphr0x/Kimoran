@@ -8,7 +8,7 @@ void Spieler::setGeld(int gold)
 {
 	this->m_geld = gold;
 }
-Insel * Spieler::getStandort()
+Insel * Spieler::getStandort()const
 {
 	return this->m_standort;
 }
@@ -19,7 +19,7 @@ void Spieler::setStandort(Insel& location)
 Insel * Spieler::setLocation(int & location, Graph& karte)
 {
 	Insel* loc;
-	auto it2 = std::next(karte.getNodes().begin(), location - 1);		// sync nodes to position
+	auto it2 = std::next(karte.getNodes().begin(), location - 1);		
 	loc = dynamic_cast<Insel*>(*it2);
 	return loc;
 }
@@ -29,9 +29,8 @@ int Spieler::isLager2(std::deque<Insel*>& path)
 	for (auto node : path) {
 		if (node->getGold() != 0) {
 			change += node->getGold();
-			//std::cout << "[ " << node->getGold() << " Taler gefunden. Famos!! ]\n" << std::endl;
-			this->m_geld += node->getGold();								// playergeld anpassen
-			node->setGold(0);											// lager leeren
+			this->m_geld += node->getGold();								
+			node->setGold(0);											
 		}
 		path.pop_front();
 	}

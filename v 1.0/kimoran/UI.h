@@ -18,21 +18,20 @@
 class Spieler;
 class UI
 {
-public:
+private:
 	Insel* getStart(Insel & start) { return &start; };
 	int checkInput(int input);																		// control input of int
-	//void setnameofPlayer(Spieler& mensch,std::string name);										// optional: set players name
-	int checkInputGameplay(int input, int islands);																		// control input of int
-
-	std::string printIntro();
-	std::string printInfo();
-	void delay(std::string a);																		// für RPG text speed
+	int checkInputGameplay(int input, int islands);													// control input of int
+	const std::string printIntro()const;
+	const std::string printInfo()const;
+	void delay(std::string a);																		// for RPG text speed
 	void MapMenu(Graph& karte);																		// map submenu: node / edge / back 
-	std::string printMapMenu();
-	bool gameOver(bool end){return end;};															// game over fkt
+	const std::string printMapMenu()const;
+	bool gameOver(bool end) { return end; };														// game over fkt
+	void menu3(Graph& karte, std::vector<Spieler*> players, Insel& ziel);							// 2nd menu: submenu map / play / quit				
+	void gameplay(Graph& karte, std::vector<Spieler*> players, Insel& ziel);						// cpu / human turn
+public:
 	void menu2();																					// 1st menu: file / quit
-	void menu3(Graph& karte,std::vector<Spieler*> players, Insel& ziel);								// 2nd menu: submenu map / play / quit				
-	void gameplay(Graph& karte, std::vector<Spieler*> players, Insel& ziel);							// cpu / human turn
 	UI();
 	~UI();
 };

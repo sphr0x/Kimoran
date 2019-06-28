@@ -29,10 +29,10 @@ Faehre Uthenwold Kimoran_Berg
 Tunnel Beramorin Askhora
 Bruecke Ostergaard Beramorin
 Bruecke Beramorin Kimoran_Berg
-Schatz array
 Lager Ostergaard 14 Taler
 Lager Uthenwold 9 Taler
 Lager list 6 Taler
 Lager Zoo 8 Taler
+Schatz array
 Mensch Kimoran_Berg 21 Taler
 Computer Kimoran_Berg 21 Taler

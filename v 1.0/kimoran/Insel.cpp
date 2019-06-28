@@ -7,7 +7,7 @@ void Insel::setGold(int value)
 	this->m_gold = value;
 }
 
-int Insel::getGold()
+int Insel::getGold()const
 {
 	return this->m_gold;
 }

@@ -13,21 +13,16 @@ int UI::checkInput(int input)
 }
 int UI::checkInputGameplay(int input, int islands)
 {
-	while ((input <= 0) || (std::cin.fail()) || input >= islands) {
+	while ((input <= 0) || (std::cin.fail()) || input > islands) {
 		std::cin.clear();
 		std::cin.ignore(30, '\n');
-		std::cerr << "[ Fehler: Bitte eine positive Zahl eingeben: ]" << std::endl;
+		std::cerr << "[ Fehler: Bitte eine positive Zahl von 1 bis "<< islands <<" eingeben: ]" << std::endl;
 		std::cout << "\n[ Eingabe: ";
 		std::cin >> input;
 	}
 	return input;
 }
-/*
-void UI::setnameofPlayer(Spieler & mensch, std::string name)
-{
-	mensch.setName(name);
-}*/
-std::string UI::printIntro(){
+const std::string UI::printIntro()const{
 	std::ostringstream out; 
 	out << "\n[ Willkommen in der Welt von Kimoran ]\n\n" << "[ Spielregeln & Informationen: ]\n\n" << "[ Spielregeln: ]\n\n" <<
 		"[ Kimoran ist eine geheimnisvolle Welt, die aus vergessenen Inseln besteht, welche mit morschen Bruecken, alten, \n" <<
@@ -46,12 +41,12 @@ std::string UI::printIntro(){
 		"\n[ * Diese Informationen gelten nur fuer die generierte Karte aus \"projekt.txt\" ! ]\n\n";
 	return out.str();
 }
-std::string UI::printInfo(){
+const std::string UI::printInfo()const{
 	std::ostringstream out;
 
 	out << "\n\n[ Information zu eigenen geladenen Textdateien: ]\n\n"
-		<< "[ Es koennen beliebig Inseln und Verbindungen im VORHANDEN FORMAT hinzugefuegt werden. \n"
-		<< "  Es kann ( noch ) nicht mehr als [1] menschlicher Spieler spielen.\n"
+		<< "[ Es koennen beliebig Inseln, Lager auf vorhandenen Inseln und Verbindungen im VORHANDEN FORMAT hinzugefuegt werden. \n"
+		<< "  Es kann ( noch ) nicht mehr als [1] menschlicher Spieler und [1] Computergegner spielen.\n"
 		<< "  Das setzten weiterer Schaetze wird vom Programmierer nicht geschaetzt. ]\n\n";
 
 	return out.str();
@@ -71,7 +66,7 @@ void UI::MapMenu(Graph & karte)					// map menu
 	int choose = 0;
 	Verbindung * kind = nullptr;
 
-	//delay(printMapMenu());
+	//delay(printMapMenu());					// activate when everything works
 	while (choose != 3) {
 		system("cls");
 		delay(printMapMenu());
@@ -84,7 +79,7 @@ void UI::MapMenu(Graph & karte)					// map menu
 
 		case 1:
 			std::cout << "\n";
-			for (auto node : karte.getNodes())std::cout <<"[ "<< node->getID() << " ]  ";
+			for (auto node : karte.getNodes())std::cout <<"[ "<< node->getID() << " ]  " << std::endl;
 			std::cout << std::endl;
 			//system("pause");
 			break;
@@ -107,7 +102,7 @@ void UI::MapMenu(Graph & karte)					// map menu
 		system("pause");
 	}
 }
-std::string UI::printMapMenu(){
+const std::string UI::printMapMenu()const{
 	std::ostringstream out;
 
 	out << "    [ Bitte Aktion via Nummerierung waehlen ]\n\n" <<
@@ -148,7 +143,7 @@ void UI::menu2() {																	// input file menu
 			try {
 				ziel = datei.readMAP(*karte, filename, players);
 				if (ziel == nullptr) {
-					error = "[ Fehler: Spieler/Lager hat keinen oder falschen Geldwert ! ]";
+					error = "[ Fehler: Spieler/Lager/Schatz hat keinen oder falschen Wert ! ]";
 					throw criticalError;
 				}
 				error.clear();
@@ -161,7 +156,7 @@ void UI::menu2() {																	// input file menu
 				system("pause");
 				system("cls");
 			}
-			catch (...){					// catch other exceptions -> should not happen
+			catch (...){																		// catch other exceptions -> should not happen
 				std::cout << "[ Unbekannter Fehler ! ]" << std::endl;
 			}
 		}
@@ -218,7 +213,7 @@ void UI::gameplay(Graph& karte, std::vector<Spieler*> players, Insel& ziel)					
 
 	UI temp;
 	double kosten;
-	Spieler* player = players[amount % 2];														// if n player -> Spieler* player = players[a % n];
+	Spieler* player = players[amount % 2];													// if n player -> Spieler* player = players[a % n];
 	Insel* dest = nullptr;
 	std::deque<Insel*> convertedPath;
 	std::deque<Insel*> pathCopy;
@@ -227,6 +222,7 @@ void UI::gameplay(Graph& karte, std::vector<Spieler*> players, Insel& ziel)					
 	additional = 0;
 
 		while (1) {
+			std::string calc = "Berechne Computer Zug...";
 			system("cls");
 			int choose = 1;
 			if (player->getName() == "Mensch") {											// mensch turn
@@ -240,7 +236,7 @@ void UI::gameplay(Graph& karte, std::vector<Spieler*> players, Insel& ziel)					
 				std::cout << "\n[ Eingabe: ";				
 				std::cin >> choose;
 				choose = checkInputGameplay(choose,islands);
-				dest = player->setLocation(choose, karte);
+				dest = player->setLocation(choose, karte);									
 			}
 			if (player->getName() == "Computer") {											// cpu turn
 				size_t n = karte.getNodes().size();
@@ -255,25 +251,29 @@ void UI::gameplay(Graph& karte, std::vector<Spieler*> players, Insel& ziel)					
 						"Auf der Stelle stehen macht weder Spass, noch wird man dadurch reich! ]\n" << "[ Neuer Versuch! ]" << std::endl;
 					system("pause");
 				}
+				else if (player->getName() == "Computer") {
+					delay(calc);
+				}
 			}
 			else {
 				break;
 			}
 		}
+		std::cout << std::endl;
 		system("cls");
 
 		kosten = karte.findShortestPathDijkstra(path, *player->getStandort(), *dest);
-		for (auto node : path) {														// convert Node to Insel
+		for (auto node : path) {															// convert Node to Insel
 			convertedPath.push_back(dynamic_cast<Insel*>(node));
 		}
-		if (player->getGeld() <= 2) {													// out of money ?
+		if (player->getGeld() <= 2) {														// out of money ?
 			std::cout <<"[ " << player->getName() << " hat keinen mueden Penny mehr... und hat verloren. Schade, schade... ]\n\n" <<
 				"[ Vielen Dank fuers Spielen ! ]" << std::endl;
 			system("pause");
 			gameOver(true);
 			break;
 		}
-		if (kosten == 10000) {
+		if (kosten == 10000) {																// no connection to treasure ?
 			std::cerr << "[ Seit des Flugverbotes in Kimoran gibt es zu dieser Insel keine Verbindung mehr. " << player->getName() <<
 				" hat seinen Zug vertan... ]" << std::endl;
 			if (dest->getID() == ziel.getID()) {
@@ -300,15 +300,15 @@ void UI::gameplay(Graph& karte, std::vector<Spieler*> players, Insel& ziel)					
 
 			pathCopy = convertedPath;
 			/*
-			for (auto node : convertedPath)std::cout << node->getID() << std::endl;					// check path convertion -> works
+			for (auto node : convertedPath)std::cout << node->getID() << std::endl;			// check path convertion -> works
 			for (auto node : pathCopy)std::cout << node->getID() << std::endl;
 			for (auto node : path)std::cout << node->getID() << std::endl;
 			*/
-			while (!convertedPath.empty()) {																	// is lager ? 
+			while (!convertedPath.empty()) {												// is lager ? 
 				additional = player->isLager2(convertedPath);
 			}
 			std::cout << "[ " << player->getName() << " ist am Zug: ]" << std::endl;
-			player->printTurn(pathCopy, kosten, *dest);												// print route
+			player->printTurn(pathCopy, kosten, *dest);										// print route
 			if (additional > 0) {
 				std::cout << "[ Unterwegs insgesamt " << additional << " Taler gefunden! Weiter geht die Suche! ]" << std::endl;
 			}

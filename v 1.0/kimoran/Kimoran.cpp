@@ -20,7 +20,7 @@ int main(){
 	2do:
 
 	 UI::readMAP
-	 : no value lager -> kein throw
+	 X no value lager -> kein throw
 
 */
 
@@ -42,31 +42,38 @@ int main(){
 	X eine insel-klasse statt der node - modifikation
 	X eine fileread klasse ( = parsing )
 	X eine exception klass
-	: UI einige funktionen in private verschiebe
+	X UI einige funktionen in private verschieben ( alle, bis auf menu2 )
+	X alle fkt, die nix verändern -> const
 	X ein gutes UML erstellen
-	: dokumentation mit screnns XD 
+		X alle const raus
+		X neue veränderungen mit paint berichtigen 
+		X static unterschreichen
+	X dokumentation mit screnns XD 
 	(
 	Alle Exceptions -> n
 	Einlesen mit eigenener Datei -> 1
 	Ausgabe der Welt -> 2
 	Spielzug -> 10
-	: erfolgreicher Zug
-	: erfolgloser Zug
-	: besuchte Lager
-	: gefundener Schatz Mensch
-	: gefundener Schatz Computer
-	: Der Fall: Ein Spieler hat kein Geld mehr
-	: Zug des Computers
-	: Gewanderter Pfad
-	: Beenden des Programms
-	: Zum Abfangen von falschen bzw. fehlerhaften Eingaben innerhalb der Menüs wird die Funktion "int UI::checkInput" bzw "int UI::checkInputGameplay" genutzt 
+	X erfolgreicher Zug
+	X erfolgloser Zug
+	X besuchte Lager
+	X gefundener Schatz Mensch
+	X gefundener Schatz Computer
+	X Der Fall: Ein Spieler hat kein Geld mehr
+	X Zug des Computers
+	X Gewanderter Pfad
+	X Beenden des Programms
+	X Zum Abfangen von falschen bzw. fehlerhaften Eingaben innerhalb der Menüs wird die Funktion "int UI::checkInput" bzw "int UI::checkInputGameplay" genutzt 
 	  und nicht das Exception-Prinzip.
-		: 1-2 tests
+		X 1-2 tests
 	)
-	: wenn out of money -> sofort beenden
+	X wenn out of money -> sofort beenden
+	X UI.cpp  Z 258 if player->name  == computer -> info ( berechne möglichen CPU zug ! )
+	X set name fkt löschen aus UI
 
 
 
+	evtl verbessern:
 
 2>UI.cpp
 2>c:\users\uni\source\repos\kimoran\kimoran\ui.cpp(42): warning C4101: "a": Unreferenzierte lokale Variable

@@ -198,8 +198,6 @@ void UI::gameplay(Graph & karte, std::vector<Spieler*> players, Insel & ziel)			
 		double kosten;
 		Spieler* player = players[playerIndex % 2];													// if n player -> Spieler* player = players[a % n];
 		Insel* dest = nullptr;
-		std::deque<Insel*> convertedPath;
-		std::deque<Insel*> pathCopy;
 		std::deque<Node*> path;
 		foundGold = 0;
 

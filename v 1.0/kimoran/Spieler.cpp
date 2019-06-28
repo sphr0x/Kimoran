@@ -32,7 +32,6 @@ int Spieler::lootLagerOnPath(std::deque<Insel*>& path)
 			this->m_geld += node->getGold();								
 			node->setGold(0);											
 		}
-		path.pop_front();
 	}
 	return change;
 }
